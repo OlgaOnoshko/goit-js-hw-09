@@ -1,5 +1,6 @@
 import flatpickr from "flatpickr";
 import 'flatpickr/dist/flatpickr.min.css';
+import { Report } from 'notiflix/build/notiflix-report-aio';
 
 const refs = {
  startButton: document.querySelector("[data-start]"),
@@ -18,9 +19,8 @@ const options = {
   defaultDate: new Date(),
   minuteIncrement: 1,
   onClose(selectedDates) {
-    //   console.log(selectedDates[0]);
       if (selectedDates[0] <= new Date()) {
-   window.alert("Please choose a date in the future")
+   Report.failure(`Error!`, `Please choose a date in the future`)
       }
       startTime = selectedDates[0];
       refs.startButton.disabled = false;
@@ -31,8 +31,6 @@ flatpickr("#datetime-picker", options);
 
 const timer = {
     intervalId: null,
-    // currentTime: Date.now(),
-    // deltaTime: startTime - currentTime,
     start() {
         this.intervalId = setInterval(() => {
             refs.startButton.disabled = true;
@@ -46,7 +44,7 @@ const timer = {
             const { days, hours, minutes, seconds } = convertMs(deltaTime);
             console.log(`${days}:${hours}:${minutes}:${seconds}`);
             updateTimer({ days, hours, minutes, seconds });
-                          
+               
         }, 1000);
     }
 };
@@ -56,16 +54,13 @@ function updateTimer({ days, hours, minutes, seconds }) {
     refs.hoursField.textContent = `${hours}`;
     refs.minutesField.textContent = `${minutes}`;
     refs.secondsField.textContent = `${seconds}`;
-
 };
 
 function addLeadingZero(value) {
     return String(value).padStart(2, "0")
-
 };
 
 function convertMs(ms) {
-  // Number of milliseconds per unit of time
   const second = 1000;
   const minute = second * 60;
   const hour = minute * 60;
@@ -78,11 +73,6 @@ function convertMs(ms) {
 
   return { days, hours, minutes, seconds };
 }
-
-// console.log(convertMs(2000)); // {days: 0, hours: 0, minutes: 0, seconds: 2}
-// console.log(convertMs(140000)); // {days: 0, hours: 0, minutes: 2, seconds: 20}
-// console.log(convertMs(24140000)); // {days: 0, hours: 6 minutes: 42, seconds: 20}
-
 
 refs.startButton.addEventListener("click", timer.start);
 
